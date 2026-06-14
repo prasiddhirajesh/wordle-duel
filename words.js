@@ -1,0 +1,25 @@
+// Word list for Wordle Duel (Wordlmaxxing)
+window.WORDLE_WORDS = [
+    "sharp", "sword", "swift", "react", "cyber",
+    "hyper", "pixel", "laser", "sonic", "gamer",
+    "coder", "arena", "lobby", "fight", "match",
+    "timer", "stats", "rules", "multi", "retro",
+    "flash", "theme", "color", "light", "space",
+    "power", "speed", "force", "logic", "pulse",
+    "focus", "board", "score", "round", "level",
+    "about", "alert", "alpha", "omega", "orbit",
+    "sound", "music", "graph", "chart", "point",
+    "cheat", "share", "guest", "admin", "owner",
+    "stars", "cloud", "storm", "flame", "frost",
+    "beast", "ghost", "witch", "demon", "angel",
+    "robot", "alien", "droid", "space", "earth",
+    "solar", "comet", "lunar", "night", "light",
+    "shade", "smoke", "vapor", "steam", "water",
+    "river", "ocean", "beach", "stone", "brick",
+    "metal", "steel", "glass", "paper", "print",
+    "write", "speak", "voice", "audio", "video",
+    "image", "photo", "media", "mouse", "phone",
+    "touch", "swipe", "scroll", "click", "press",
+    "enter", "space", "shift", "clear", "reset",
+    "start", "pause", "abort", "close", "leave"
+];
