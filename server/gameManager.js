@@ -247,7 +247,7 @@ function startGame(io, room) {
 
     room.timerInterval = setInterval(() => {
         let activePlayersCount = 0;
-        let expiredPlayer = null;
+        let expiredPlayers = [];
 
         room.players.forEach(p => {
             if (!p.finished) {
@@ -257,7 +257,7 @@ function startGame(io, room) {
                 if (p.timeLeft <= 0) {
                     p.timeLeft = 0;
                     p.finished = true;
-                    expiredPlayer = p;
+                    expiredPlayers.push(p);
                 }
             }
         });
@@ -271,10 +271,16 @@ function startGame(io, room) {
             });
         });
 
-        if (expiredPlayer) {
+        if (expiredPlayers.length > 0) {
             clearInterval(room.timerInterval);
-            const opponent = room.players.find(other => other.id !== expiredPlayer.id);
-            endRound(io, room, opponent); // Opponent wins
+            if (expiredPlayers.length === 2) {
+                // Both players expired at the exact same second
+                endRound(io, room, null);
+            } else {
+                // Only one player expired; the other wins
+                const winner = room.players.find(other => other.id !== expiredPlayers[0].id);
+                endRound(io, room, winner);
+            }
             return;
         }
 
