@@ -8,10 +8,10 @@ const gameManager = require('./gameManager');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+  cors: {
+    origin: 'https://wordlmaxxing.vercel.app/', 
+    methods: ['GET', 'POST']
+  }
 });
 
 // Middleware
@@ -32,6 +32,4 @@ io.on('connection', (socket) => {
 
 // Listen on Port 3000
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Wordlmaxxing server running at http://localhost:${PORT}`);
-});
+server.listen(PORT, () => console.log(`Server running on :${PORT}`));
