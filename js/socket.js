@@ -67,7 +67,7 @@ socket.on('timer-sync', (data) => {
 });
 
 socket.on('round-over', (data) => {
-    // data: { winnerId, winnerName, word, players }
+    // data: { winnerId, winnerName, word, players, reason }
     const didIWin = data.winnerId === socket.id;
     const opponent = data.players.find(p => p.id !== socket.id);
     const me = data.players.find(p => p.id === socket.id);
@@ -77,11 +77,29 @@ socket.on('round-over', (data) => {
 
     let reason = "";
     if (data.winnerId === null) {
-        reason = "Round tie! Nobody solved it.";
+        if (data.reason === 'timer-expired') {
+            reason = "Time's up for both players!";
+        } else if (data.reason === 'out-of-guesses') {
+            reason = "Out of guesses for both players!";
+        } else {
+            reason = "Round tie! Nobody solved it.";
+        }
     } else if (didIWin) {
-        reason = "You solved it first!";
+        if (data.reason === 'timer-expired') {
+            reason = "Opponent ran out of time!";
+        } else if (data.reason === 'out-of-guesses') {
+            reason = "Opponent ran out of guesses!";
+        } else {
+            reason = "You solved it first!";
+        }
     } else {
-        reason = `${data.winnerName} solved it first!`;
+        if (data.reason === 'timer-expired') {
+            reason = "You ran out of time!";
+        } else if (data.reason === 'out-of-guesses') {
+            reason = "You ran out of guesses!";
+        } else {
+            reason = `${data.winnerName} solved it first!`;
+        }
     }
 
     finishRound(didIWin, reason, data.word);

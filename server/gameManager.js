@@ -191,12 +191,12 @@ function handleConnection(io, socket) {
         // Check game end conditions
         if (guess === targetWord) {
             player.finished = true;
-            endRound(io, room, player);
+            endRound(io, room, player, 'solved');
         } else if (player.activeRow >= 6) {
             player.finished = true;
             if (opponent && opponent.finished) {
                 // Both players completed without solving
-                endRound(io, room, null);
+                endRound(io, room, null, 'out-of-guesses');
             }
         }
     });
@@ -275,11 +275,11 @@ function startGame(io, room) {
             clearInterval(room.timerInterval);
             if (expiredPlayers.length === 2) {
                 // Both players expired at the exact same second
-                endRound(io, room, null);
+                endRound(io, room, null, 'timer-expired');
             } else {
                 // Only one player expired; the other wins
                 const winner = room.players.find(other => other.id !== expiredPlayers[0].id);
-                endRound(io, room, winner);
+                endRound(io, room, winner, 'timer-expired');
             }
             return;
         }
@@ -290,7 +290,7 @@ function startGame(io, room) {
     }, 1000);
 }
 
-function endRound(io, room, winnerPlayer) {
+function endRound(io, room, winnerPlayer, reason) {
     clearInterval(room.timerInterval);
     if (room.botTimeout) clearTimeout(room.botTimeout);
 
@@ -302,7 +302,8 @@ function endRound(io, room, winnerPlayer) {
         winnerId: winnerPlayer ? winnerPlayer.id : null,
         winnerName: winnerPlayer ? winnerPlayer.name : 'No one',
         word: room.word,
-        players: room.players.map(p => ({ id: p.id, name: p.name, score: p.score }))
+        players: room.players.map(p => ({ id: p.id, name: p.name, score: p.score })),
+        reason: reason || 'solved'
     });
 }
 
@@ -478,11 +479,11 @@ function makeBotGuess(io, room) {
 
     if (guess === targetWord) {
         bot.finished = true;
-        endRound(io, room, bot);
+        endRound(io, room, bot, 'solved');
     } else if (bot.activeRow >= 6) {
         bot.finished = true;
         if (human && human.finished) {
-            endRound(io, room, null);
+            endRound(io, room, null, 'out-of-guesses');
         }
     } else {
         scheduleNextBotGuess(io, room);
