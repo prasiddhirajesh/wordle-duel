@@ -24,28 +24,4 @@ wordlmaxxing/
 └── README.md
 ```
 
-## Setup & Running Instructions
 
-To launch the real-time multiplayer game locally:
-
-1. Open your terminal and navigate to the `server/` directory:
-   ```bash
-   cd server
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Launch the server:
-   ```bash
-   node server.js
-   ```
-
-4. Open your browser and go to:
-   ```
-   http://localhost:3000
-   ```
-
-To test multiplayer, open `http://localhost:3000` in **two separate tabs or window sessions**, click **JOIN RANDOM** on both, and start dueling!
