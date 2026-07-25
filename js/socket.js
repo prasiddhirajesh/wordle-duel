@@ -1,5 +1,7 @@
 // --- SOCKET.IO CLIENT & REAL-TIME MULTIPLAYER ---
-const socket = (window.location.protocol === 'file:') ? io('http://localhost:3000') : io();
+const socket = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+    ? io('http://localhost:3000')
+    : io('https://wordlmaxxing.up.railway.app/');
 
 // Generate or retrieve player name
 let myPlayerName = localStorage.getItem("playerName") || "Player_" + Math.floor(Math.random() * 900 + 100);
