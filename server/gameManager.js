@@ -194,6 +194,9 @@ function handleConnection(io, socket) {
         const room = findRoomBySocketId(socket.id);
         if (!room) return;
 
+        // If the next round has already been started by the other player, ignore
+        if (room.started) return;
+
         // Reset player round variables
         room.players.forEach(p => {
             p.activeRow = 0;
@@ -234,6 +237,7 @@ function startGame(io, room) {
 
 function endRound(io, room, winnerPlayer, reason) {
     if (room.botTimeout) clearTimeout(room.botTimeout);
+    room.started = false; // Mark room as not started to block any further guesses in this round
 
     if (winnerPlayer) {
         winnerPlayer.score++;
