@@ -37,13 +37,12 @@ function handleConnection(io, socket) {
             const room = {
                 roomId,
                 players: [
-                    { id: player1.socket.id, name: player1.playerName, score: 0, activeRow: 0, finished: false, timeLeft: 60 },
-                    { id: player2.socket.id, name: player2.playerName, score: 0, activeRow: 0, finished: false, timeLeft: 60 }
+                    { id: player1.socket.id, name: player1.playerName, score: 0, activeRow: 0, finished: false },
+                    { id: player2.socket.id, name: player2.playerName, score: 0, activeRow: 0, finished: false }
                 ],
                 word: wordBank.getRandomWord(),
                 started: true,
-                round: 1,
-                timerInterval: null
+                round: 1
             };
 
             rooms.set(roomId, room);
@@ -82,12 +81,11 @@ function handleConnection(io, socket) {
             room = {
                 roomId: code,
                 players: [
-                    { id: socket.id, name: playerName, score: 0, activeRow: 0, finished: false, timeLeft: 60 }
+                    { id: socket.id, name: playerName, score: 0, activeRow: 0, finished: false }
                 ],
                 word: '',
                 started: false,
-                round: 1,
-                timerInterval: null
+                round: 1
             };
             rooms.set(code, room);
             await socket.join(code);
@@ -99,8 +97,7 @@ function handleConnection(io, socket) {
                     name: playerName,
                     score: 0,
                     activeRow: 0,
-                    finished: false,
-                    timeLeft: 60
+                    finished: false
                 });
                 await socket.join(code);
                 room.started = true;
@@ -162,16 +159,7 @@ function handleConnection(io, socket) {
 
         player.activeRow++;
 
-        // Deal damage: deduct 3s off opponent timer per correct letter
-        let correctCount = 0;
-        cellStates.forEach(s => {
-            if (s === "correct") correctCount++;
-        });
 
-        if (correctCount > 0 && opponent) {
-            opponent.timeLeft = Math.max(0, opponent.timeLeft - (correctCount * 3));
-            console.log(`Player ${player.name} dealt ${correctCount * 3}s damage to ${opponent.name}. Opponent time: ${opponent.timeLeft}`);
-        }
 
         // Send guess result to guesser
         socket.emit('guess-result', {
@@ -210,7 +198,6 @@ function handleConnection(io, socket) {
         room.players.forEach(p => {
             p.activeRow = 0;
             p.finished = false;
-            p.timeLeft = 60;
         });
 
         room.word = wordBank.getRandomWord();
@@ -230,7 +217,6 @@ function handleConnection(io, socket) {
 }
 
 function startGame(io, room) {
-    clearInterval(room.timerInterval);
     if (room.botTimeout) clearTimeout(room.botTimeout);
     
     io.to(room.roomId).emit('game-start', {
@@ -244,54 +230,9 @@ function startGame(io, room) {
     if (hasBot && room.started) {
         scheduleNextBotGuess(io, room);
     }
-
-    room.timerInterval = setInterval(() => {
-        let activePlayersCount = 0;
-        let expiredPlayers = [];
-
-        room.players.forEach(p => {
-            if (!p.finished) {
-                p.timeLeft--;
-                activePlayersCount++;
-
-                if (p.timeLeft <= 0) {
-                    p.timeLeft = 0;
-                    p.finished = true;
-                    expiredPlayers.push(p);
-                }
-            }
-        });
-
-        // Sync timers with both players
-        room.players.forEach(p => {
-            const opponent = room.players.find(other => other.id !== p.id);
-            io.to(p.id).emit('timer-sync', {
-                playerTime: p.timeLeft,
-                opponentTime: opponent ? opponent.timeLeft : 0
-            });
-        });
-
-        if (expiredPlayers.length > 0) {
-            clearInterval(room.timerInterval);
-            if (expiredPlayers.length === 2) {
-                // Both players expired at the exact same second
-                endRound(io, room, null, 'timer-expired');
-            } else {
-                // Only one player expired; the other wins
-                const winner = room.players.find(other => other.id !== expiredPlayers[0].id);
-                endRound(io, room, winner, 'timer-expired');
-            }
-            return;
-        }
-
-        if (activePlayersCount === 0) {
-            clearInterval(room.timerInterval);
-        }
-    }, 1000);
 }
 
 function endRound(io, room, winnerPlayer, reason) {
-    clearInterval(room.timerInterval);
     if (room.botTimeout) clearTimeout(room.botTimeout);
 
     if (winnerPlayer) {
@@ -324,7 +265,6 @@ function leaveRoomsAndQueue(io, socket) {
 
     const room = findRoomBySocketId(socket.id);
     if (room) {
-        clearInterval(room.timerInterval);
         if (room.botTimeout) {
             clearTimeout(room.botTimeout);
         }
@@ -342,14 +282,13 @@ async function startBotGame(io, socket, playerName, difficulty) {
     const room = {
         roomId,
         players: [
-            { id: socket.id, name: playerName, score: 0, activeRow: 0, finished: false, timeLeft: 60 },
-            { id: 'bot', name: `ByteBot [${difficulty.toUpperCase()}]`, score: 0, activeRow: 0, finished: false, timeLeft: 60 }
+            { id: socket.id, name: playerName, score: 0, activeRow: 0, finished: false },
+            { id: 'bot', name: `ByteBot [${difficulty.toUpperCase()}]`, score: 0, activeRow: 0, finished: false }
         ],
         word: wordBank.getRandomWord(),
         started: true,
         round: 1,
         difficulty,
-        timerInterval: null,
         botTimeout: null
     };
 
@@ -452,21 +391,7 @@ function makeBotGuess(io, room) {
 
     bot.activeRow++;
 
-    // Deal damage
-    let correctCount = 0;
-    cellStates.forEach(s => {
-        if (s === "correct") correctCount++;
-    });
 
-    if (correctCount > 0 && human) {
-        human.timeLeft = Math.max(0, human.timeLeft - (correctCount * 3));
-        console.log(`Bot dealt ${correctCount * 3}s damage to ${human.name}. Human time: ${human.timeLeft}`);
-        
-        io.to(human.id).emit('timer-sync', {
-            playerTime: human.timeLeft,
-            opponentTime: bot.timeLeft
-        });
-    }
 
     if (human) {
         io.to(human.id).emit('opponent-progress', {

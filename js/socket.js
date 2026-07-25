@@ -1,5 +1,5 @@
 // --- SOCKET.IO CLIENT & REAL-TIME MULTIPLAYER ---
-const socket = io('https://wordlmaxxing.up.railway.app/');
+const socket = (window.location.protocol === 'file:') ? io('http://localhost:3000') : io();
 
 // Generate or retrieve player name
 let myPlayerName = localStorage.getItem("playerName") || "Player_" + Math.floor(Math.random() * 900 + 100);
@@ -60,11 +60,7 @@ socket.on('opponent-progress', (data) => {
     revealOpponentProgress(data.row, data.cellStates);
 });
 
-socket.on('timer-sync', (data) => {
-    // data: { playerTime, opponentTime }
-    timeLeft = data.playerTime;
-    updateTimerDisplay();
-});
+
 
 socket.on('round-over', (data) => {
     // data: { winnerId, winnerName, word, players, reason }
@@ -77,25 +73,19 @@ socket.on('round-over', (data) => {
 
     let reason = "";
     if (data.winnerId === null) {
-        if (data.reason === 'timer-expired') {
-            reason = "Time's up for both players!";
-        } else if (data.reason === 'out-of-guesses') {
+        if (data.reason === 'out-of-guesses') {
             reason = "Out of guesses for both players!";
         } else {
             reason = "Round tie! Nobody solved it.";
         }
     } else if (didIWin) {
-        if (data.reason === 'timer-expired') {
-            reason = "Opponent ran out of time!";
-        } else if (data.reason === 'out-of-guesses') {
+        if (data.reason === 'out-of-guesses') {
             reason = "Opponent ran out of guesses!";
         } else {
             reason = "You solved it first!";
         }
     } else {
-        if (data.reason === 'timer-expired') {
-            reason = "You ran out of time!";
-        } else if (data.reason === 'out-of-guesses') {
+        if (data.reason === 'out-of-guesses') {
             reason = "You ran out of guesses!";
         } else {
             reason = `${data.winnerName} solved it first!`;

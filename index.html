@@ -377,19 +377,10 @@
                 <span id="player-score"
                     class="font-display-lg-mobile text-3xl font-bold leading-none text-primary">0</span>
             </div>
-            <!-- Timer -->
-            <div class="flex flex-col items-center justify-center">
-                <div id="timer-container"
-                    class="relative w-24 h-24 flex items-center justify-center bg-surface-container-highest rounded-full border-2 border-primary/20 animate-pulse-soft">
-                    <svg class="absolute inset-0 w-full h-full -rotate-90">
-                        <circle class="text-outline-variant/20" cx="50%" cy="50%" fill="transparent" r="42%"
-                            stroke="currentColor" stroke-width="4"></circle>
-                        <circle id="timer-circle" class="text-primary timer-glow" cx="50%" cy="50%" fill="transparent"
-                            r="42%" stroke="currentColor" stroke-dasharray="264" stroke-dashoffset="0"
-                            stroke-linecap="round" stroke-width="4"
-                            style="transition: stroke-dashoffset 0.1s linear, stroke 0.3s;"></circle>
-                    </svg>
-                    <span class="font-label-mono text-xl font-bold text-primary" id="timer">0:60</span>
+            <!-- VS Badge -->
+            <div class="flex flex-col items-center justify-center select-none">
+                <div class="relative w-16 h-16 flex items-center justify-center bg-surface-container-highest rounded-full border border-outline-variant/30 shadow-[0_0_15px_rgba(255,171,243,0.15)] animate-pulse-soft">
+                    <span class="font-display-lg-mobile text-xl font-extrabold italic text-primary">VS</span>
                 </div>
             </div>
             <!-- P2 Score -->
@@ -712,17 +703,15 @@
                             class="flex items-start gap-3 p-4 rounded-xl bg-surface-container-high border border-white/5">
                             <span
                                 class="font-label-mono text-secondary bg-surface-container-lowest border border-secondary/20 w-8 h-8 flex items-center justify-center rounded-lg shrink-0 select-none text-xs">02</span>
-                            <p class="text-xs text-on-surface-variant leading-normal select-none">Correct guesses <span
-                                    class="text-on-surface font-semibold underline decoration-secondary/50 decoration-2">deal
-                                    damage</span> to your opponent's timer.</p>
+                            <p class="text-xs text-on-surface-variant leading-normal select-none">Correct letters reveal <span
+                                    class="text-on-surface font-semibold underline decoration-secondary/50 decoration-2">colored clues</span> (Green, Yellow, Gray) on your grid.</p>
                         </div>
                         <div
                             class="flex items-start gap-3 p-4 rounded-xl bg-surface-container-high border border-white/5">
                             <span
                                 class="font-label-mono text-tertiary bg-surface-container-lowest border border-tertiary/20 w-8 h-8 flex items-center justify-center rounded-lg shrink-0 select-none text-xs">03</span>
-                            <p class="text-xs text-on-surface-variant leading-normal select-none">Last player with <span
-                                    class="text-on-surface font-semibold underline decoration-tertiary/50 decoration-2">time
-                                    remaining</span> claims the duel.</p>
+                            <p class="text-xs text-on-surface-variant leading-normal select-none">The first player to <span
+                                    class="text-on-surface font-semibold underline decoration-tertiary/50 decoration-2">solve the word</span> wins the round.</p>
                         </div>
                     </div>
                 </div>
@@ -746,11 +735,9 @@
                                 Not in word.
                             </div>
                         </li>
-                        <li>You have a <strong class="text-primary">60-second timer</strong> that ticks down.</li>
-                        <li>Every <strong class="text-secondary-fixed-dim">correct (green) letter</strong> you guess
-                            inflicts <strong class="text-error">damage</strong> on your opponent, cutting 3 seconds off
-                            their timer!</li>
-                        <li>If you solve the word, you stop your countdown and deal massive timer damage.</li>
+                        <li>Submit guesses in 6 attempts or fewer to solve the secret word.</li>
+                        <li>Track opponent progress on the Intel Board to see how close they are to a solution.</li>
+                        <li>The first player to correctly guess the secret word wins the round. If both run out of guesses, the round ends in a tie.</li>
                     </ul>
                 </div>
 

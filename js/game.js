@@ -17,9 +17,7 @@ let opponentGridState = []; // 6 rows of colors: 'correct', 'present', 'absent',
 let opponentActiveRow = 0;
 let opponentFinished = false;
 
-// Duel Timer state
-let timeLeft = 60; // total seconds starting
-let timerTotalMax = 60;
+
 
 // Results screen countdown
 let resultsCountdownInterval = null;
@@ -79,10 +77,7 @@ function initGame(opponentName) {
     // Initialize Grid structures
     buildGrids();
 
-    // Set up timers
-    timeLeft = 60;
-    timerTotalMax = 60;
-    updateTimerDisplay();
+
 
     navigateTo("arena");
 }
@@ -122,34 +117,7 @@ function buildGrids() {
     }
 }
 
-// --- TIMER DISPLAY ---
-function updateTimerDisplay() {
-    const timerEl = document.getElementById("timer");
-    const timerContainer = document.getElementById("timer-container");
-    const timerCircle = document.getElementById("timer-circle");
 
-    if (timerEl && timerContainer && timerCircle) {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-        // Update SVG radial border offset
-        const circumference = 264;
-        const offset = circumference - (timeLeft / timerTotalMax) * circumference;
-        timerCircle.style.strokeDashoffset = offset;
-
-        // Visual feedback when running out of time
-        if (timeLeft <= 10) {
-            timerEl.className = "font-label-mono text-xl font-bold text-error";
-            timerCircle.className.baseVal = "text-error timer-glow-red";
-            timerContainer.className = "relative w-24 h-24 flex items-center justify-center bg-surface-container-highest rounded-full border-2 border-error/20 animate-pulse-soft";
-        } else {
-            timerEl.className = "font-label-mono text-xl font-bold text-primary";
-            timerCircle.className.baseVal = "text-primary timer-glow";
-            timerContainer.className = "relative w-24 h-24 flex items-center justify-center bg-surface-container-highest rounded-full border-2 border-primary/20 animate-pulse-soft";
-        }
-    }
-}
 
 // Handle physical keyboard input
 window.addEventListener("keydown", (e) => {
@@ -424,9 +392,6 @@ function finishRound(didPlayerWin, reasonText, secretWord) {
     const scoreO = document.getElementById("score-opponent");
     const modalScoreP = document.getElementById("round-over-score-player");
     const modalScoreO = document.getElementById("round-over-score-opponent");
-    const timer = document.getElementById("timer");
-
-    if (resTime && timer) resTime.textContent = timer.textContent;
     if (scoreP) scoreP.textContent = scorePlayer;
     if (scoreO) scoreO.textContent = scoreOpponent;
     if (modalScoreP) modalScoreP.textContent = scorePlayer;
